@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PPT — API Migration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0d1117; color: #e6edf3; }
+  .slide { width: 100%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 60px 80px; page-break-after: always; }
+  .slide h1 { font-size: 48px; color: #58a6ff; margin-bottom: 20px; }
+  .slide h2 { font-size: 36px; color: #58a6ff; margin-bottom: 25px; border-bottom: 2px solid #30363d; padding-bottom: 10px; }
+  .slide h3 { font-size: 24px; color: #79c0ff; margin: 15px 0 10px; }
+  .slide p, .slide li { font-size: 22px; line-height: 1.8; }
+  .slide ul { margin-left: 30px; }
+  .slide li { margin-bottom: 8px; }
+  .center { text-align: center; align-items: center; }
+  .subtitle { font-size: 28px; color: #8b949e; margin-top: 15px; }
+  .big-emoji { font-size: 80px; margin-bottom: 20px; }
+  pre { background: #161b22; padding: 20px; border-radius: 10px; font-size: 18px; overflow-x: auto; margin: 15px 0; color: #c9d1d9; border: 1px solid #30363d; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+  th, td { border: 1px solid #30363d; padding: 12px 15px; text-align: left; font-size: 18px; }
+  th { background: #1a237e; color: white; }
+  tr:nth-child(even) { background: #161b22; }
+  .box { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 25px; margin: 15px 0; }
+  .green { color: #3fb950; }
+  .red { color: #f85149; }
+  .yellow { color: #d29922; }
+  .blue { color: #58a6ff; }
+  .cols { display: flex; gap: 30px; }
+  .col { flex: 1; }
+  .arch { font-family: monospace; font-size: 18px; line-height: 2; }
+  @media print { .slide { min-height: 100vh; } }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide center">
+  <div class="big-emoji">🔄</div>
+  <h1>AI-Assisted Compiler-Guided<br>API Migration</h1>
+  <p class="subtitle">with Explainable Validation</p>
+  <br>
+  <p style="font-size:24px; color:#8b949e;">Compiler Design Course Project — Semester 5</p>
+  <p style="font-size:22px; color:#8b949e; margin-top:10px;">Tejaswini Patil</p>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide">
+  <h2>❓ The Problem</h2>
+  <ul>
+    <li>APIs evolve — methods get <strong>renamed</strong>, arguments change <strong>types</strong></li>
+    <li>Parameters get <strong>reordered</strong>, methods become <strong>properties</strong></li>
+    <li>Manual migration is <strong>tedious and error-prone</strong></li>
+    <li>Simple find-and-replace <strong>cannot handle complex changes</strong></li>
+  </ul>
+  <br>
+  <div class="box">
+    <h3>Example: What needs to change?</h3>
+<pre>
+# Old (deprecated)                    # New (target)
+client.old_connect('host', '8080')  → client.connect('host', 8080)
+auth.login('admin', 'secret')       → auth.authenticate({...})
+token = auth.get_token()            → token = auth.token
+</pre>
+  </div>
+</div>
+
+<!-- SLIDE 3: Solution -->
+<div class="slide">
+  <h2>💡 Our Solution</h2>
+  <p style="font-size:24px; margin-bottom:20px;">Use <strong>compiler techniques</strong> — not regex — to migrate APIs automatically</p>
+  <div class="cols">
+    <div class="col box">
+      <h3 class="green">✅ What We Do</h3>
+      <ul>
+        <li>Parse code into AST</li>
+        <li>Build symbol tables</li>
+        <li>Semantic type checking</li>
+        <li>AST-based rewriting</li>
+        <li>5-stage validation</li>
+      </ul>
+    </div>
+    <div class="col box">
+      <h3 class="red">❌ What We Don't Do</h3>
+      <ul>
+        <li>No regex replacement</li>
+        <li>No string matching</li>
+        <li>No blind AI generation</li>
+        <li>No manual intervention</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Architecture -->
+<div class="slide">
+  <h2>🏗️ System Architecture</h2>
+  <div class="arch box">
+SOURCE CODE
+    ↓
+AST PARSER              → Parse into Abstract Syntax Tree
+    ↓
+API DETECTOR             → Find deprecated API calls
+    ↓
+SYMBOL ANALYZER          → Build symbol table (variable → class)
+    ↓
+SEMANTIC ANALYZER        → Type checking, argument validation
+    ↓
+MIGRATION PLANNER        → Create transformation plans
+    ↓
+AST TRANSFORMER          → Rewrite AST nodes (NodeTransformer)
+    ↓
+CODE GENERATOR           → Generate new code + diff
+    ↓
+VALIDATION PIPELINE      → 5 validators → PASS / FAIL
+  </div>
+</div>
+
+<!-- SLIDE 5: Compiler Concepts -->
+<div class="slide">
+  <h2>📚 Compiler Design Concepts Used</h2>
+  <table>
+    <tr><th>Concept</th><th>Implementation</th></tr>
+    <tr><td>Lexical &amp; Syntax Analysis</td><td><code>ast.parse()</code></td></tr>
+    <tr><td>Abstract Syntax Tree</td><td>All phases operate on AST</td></tr>
+    <tr><td>Visitor Pattern</td><td><code>NodeVisitor</code> + <code>NodeTransformer</code></td></tr>
+    <tr><td>Symbol Table</td><td>Variable→class, imports, scopes</td></tr>
+    <tr><td>Semantic Analysis</td><td>Type checking, arg count validation</td></tr>
+    <tr><td>Intermediate Representation</td><td>MigrationPlan as IR</td></tr>
+    <tr><td>Code Generation</td><td><code>ast.unparse()</code></td></tr>
+    <tr><td>Multi-pass Compilation</td><td>7-stage pipeline</td></tr>
+  </table>
+</div>
+
+<!-- SLIDE 6: Migration Patterns -->
+<div class="slide">
+  <h2>🔧 6 Transformation Types</h2>
+  <table>
+    <tr><th>#</th><th>Type</th><th>Example</th></tr>
+    <tr><td>1</td><td>Simple Rename</td><td><code>close_connection()</code> → <code>close()</code></td></tr>
+    <tr><td>2</td><td>Rename + Type Conv</td><td><code>old_connect('h','8080')</code> → <code>connect('h',int('8080'))</code></td></tr>
+    <tr><td>3</td><td>Rename + New Param</td><td><code>execute_query(sql)</code> → <code>execute(query, params=None)</code></td></tr>
+    <tr><td>4</td><td>Arg Reorder</td><td><code>send_request(url,method,data)</code> → <code>request(method,url,body)</code></td></tr>
+    <tr><td>5</td><td>Arg Merge</td><td><code>login('u','p')</code> → <code>authenticate({'username':'u',...})</code></td></tr>
+    <tr><td>6</td><td>Method → Property</td><td><code>get_token()</code> → <code>token</code></td></tr>
+  </table>
+</div>
+
+<!-- SLIDE 7: Demo -->
+<div class="slide">
+  <h2>🎯 Live Demo — Before &amp; After</h2>
+  <div class="cols">
+    <div class="col box">
+      <h3 class="red">Before (Deprecated)</h3>
+<pre>from benchmark_auth import Auth
+
+auth = Auth()
+auth.login('admin', 'secret')
+token = auth.get_token()</pre>
+    </div>
+    <div class="col box">
+      <h3 class="green">After (Migrated)</h3>
+<pre>from benchmark_auth import Auth
+
+auth = Auth()
+auth.authenticate(
+  {'username': 'admin',
+   'password': 'secret'})
+token = auth.token</pre>
+    </div>
+  </div>
+  <br>
+  <p><span class="green">✅ Validation: PASS</span> — syntax ✓ | AST ✓ | types ✓ | API ✓ | compiler ✓</p>
+</div>
+
+<!-- SLIDE 8: Validation -->
+<div class="slide">
+  <h2>✅ 5-Stage Validation Pipeline</h2>
+  <table>
+    <tr><th>Validator</th><th>What It Checks</th><th>How</th></tr>
+    <tr><td>1. Syntax</td><td>Valid Python?</td><td><code>compile()</code></td></tr>
+    <tr><td>2. Compiler</td><td>Compiles correctly?</td><td>Isolated check</td></tr>
+    <tr><td>3. AST</td><td>New APIs present? Old gone?</td><td>Re-parse + walk</td></tr>
+    <tr><td>4. Type</td><td>Args match target types?</td><td>Inference + spec</td></tr>
+    <tr><td>5. API</td><td>Arg count correct? Property?</td><td>Spec compliance</td></tr>
+  </table>
+  <br>
+  <div class="box">
+    <p><span class="green">✅ PASS</span> — All validators agree the migration is correct</p>
+    <p><span class="red">❌ FAIL</span> — Validation catches errors (wrong arg count, type mismatch)</p>
+    <p><span class="yellow">🔧 REPAIR</span> — Fixable issues detected (e.g., property called with args)</p>
+  </div>
+</div>
+
+<!-- SLIDE 9: Testing -->
+<div class="slide">
+  <h2>🧪 Testing Results</h2>
+  <table>
+    <tr><th>Test File</th><th>Tests</th><th>Coverage Area</th></tr>
+    <tr><td>test_parser.py</td><td>33</td><td>Parsing, imports, calls, errors</td></tr>
+    <tr><td>test_api_detector.py</td><td>27</td><td>Detection, false positives</td></tr>
+    <tr><td>test_symbol_semantic.py</td><td>36</td><td>Symbols, types, semantics</td></tr>
+    <tr><td>test_planner.py</td><td>16</td><td>Plans, confidence, ordering</td></tr>
+    <tr><td>test_transformer.py</td><td>17</td><td>All 6 transformations</td></tr>
+    <tr><td>test_ai.py</td><td>18</td><td>Mock AI, prompts, agent</td></tr>
+    <tr><td>test_validation.py</td><td>12</td><td>All 5 validators</td></tr>
+    <tr style="background:#1a237e;color:white;"><td><strong>Total</strong></td><td><strong>159</strong></td><td><strong class="green">ALL PASSING ✅</strong></td></tr>
+  </table>
+</div>
+
+<!-- SLIDE 10: AI Integration -->
+<div class="slide">
+  <h2>🤖 AI Integration</h2>
+  <div class="box">
+    <h3>Key Principle: AI is <span class="yellow">advisory only</span></h3>
+    <ul>
+      <li>AI <strong>never replaces</strong> the deterministic AST pipeline</li>
+      <li>AI provides <strong>explanations and suggestions</strong></li>
+      <li>System works <strong>100% without any API key</strong> (mock mode)</li>
+      <li>Supports <strong>OpenAI</strong> and <strong>Google Gemini</strong> when configured</li>
+    </ul>
+  </div>
+  <br>
+  <div class="cols">
+    <div class="col box">
+      <h3>Deterministic Pipeline</h3>
+      <p>Handles all transformations</p>
+      <p class="green">Always available ✅</p>
+    </div>
+    <div class="col box">
+      <h3>AI Layer</h3>
+      <p>Adds explanations</p>
+      <p class="yellow">Optional enhancement ⚡</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Technologies -->
+<div class="slide">
+  <h2>🛠️ Technologies</h2>
+  <div class="cols">
+    <div class="col">
+      <table>
+        <tr><th>Technology</th><th>Purpose</th></tr>
+        <tr><td>Python 3.11</td><td>Core language</td></tr>
+        <tr><td><code>ast</code> module</td><td>Parse, traverse, transform</td></tr>
+        <tr><td><code>difflib</code></td><td>Diff generation</td></tr>
+        <tr><td><code>pytest</code></td><td>159 tests</td></tr>
+        <tr><td><code>Streamlit</code></td><td>Web UI</td></tr>
+      </table>
+    </div>
+    <div class="col box">
+      <h3>Project Stats</h3>
+      <ul>
+        <li><span class="blue">10</span> migration patterns</li>
+        <li><span class="blue">6</span> transformation types</li>
+        <li><span class="blue">5</span> validators</li>
+        <li><span class="green">159</span> tests passing</li>
+        <li><span class="blue">30+</span> Python files</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Conclusion -->
+<div class="slide center">
+  <h2>📌 Conclusion</h2>
+  <br>
+  <div class="box" style="text-align:left; max-width:800px; margin:0 auto;">
+    <p style="font-size:24px; margin-bottom:15px;"><strong>Research Question:</strong> Can a compiler-aware validation layer improve AI-assisted API migration?</p>
+    <p style="font-size:28px;" class="green"><strong>Answer: Yes ✅</strong></p>
+    <br>
+    <ul style="font-size:20px;">
+      <li>✅ Correctness guaranteed through 5-stage validation</li>
+      <li>✅ Explainability built-in — every step is traceable</li>
+      <li>✅ 6 complex transformation types handled via AST</li>
+      <li>✅ AI augments but never replaces compiler pipeline</li>
+      <li>✅ Zero regex — all operations are AST-based</li>
+      <li>✅ 159/159 automated tests passing</li>
+    </ul>
+  </div>
+  <br><br>
+  <p style="font-size:24px; color:#8b949e;">Thank You! 🎓</p>
+</div>
+
+</body>
+</html>

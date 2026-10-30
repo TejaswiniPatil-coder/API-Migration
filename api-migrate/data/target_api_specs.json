@@ -1,0 +1,113 @@
+{
+    "_comment": "Target API specifications for validation — controlled benchmark APIs",
+    "_label": "CONTROLLED BENCHMARK — not real library versions",
+    "version": "1.0",
+    "apis": [
+        {
+            "api_name": "HTTPClient.connect",
+            "library": "benchmark_http",
+            "version": "2.0",
+            "parameters": [
+                {"name": "host", "type": "str", "required": true, "default": null},
+                {"name": "port", "type": "int", "required": true, "default": null}
+            ],
+            "return_type": "None",
+            "description": "Establish connection to a server"
+        },
+        {
+            "api_name": "HTTPClient.request",
+            "library": "benchmark_http",
+            "version": "2.0",
+            "parameters": [
+                {"name": "method", "type": "str", "required": true, "default": null},
+                {"name": "url", "type": "str", "required": true, "default": null},
+                {"name": "body", "type": "str", "required": false, "default": "None"}
+            ],
+            "return_type": "str",
+            "description": "Send an HTTP request"
+        },
+        {
+            "api_name": "HTTPClient.close",
+            "library": "benchmark_http",
+            "version": "2.0",
+            "parameters": [],
+            "return_type": "None",
+            "description": "Close the connection"
+        },
+        {
+            "api_name": "Database.connect",
+            "library": "benchmark_db",
+            "version": "2.0",
+            "parameters": [
+                {"name": "host", "type": "str", "required": false, "default": "None"},
+                {"name": "port", "type": "int", "required": false, "default": "None"},
+                {"name": "database", "type": "str", "required": false, "default": "None"}
+            ],
+            "return_type": "None",
+            "description": "Connect to a database"
+        },
+        {
+            "api_name": "Database.execute",
+            "library": "benchmark_db",
+            "version": "2.0",
+            "parameters": [
+                {"name": "sql", "type": "str", "required": true, "default": null},
+                {"name": "params", "type": "tuple", "required": false, "default": "None"}
+            ],
+            "return_type": "None",
+            "description": "Execute a SQL statement"
+        },
+        {
+            "api_name": "Database.fetch_all",
+            "library": "benchmark_db",
+            "version": "2.0",
+            "parameters": [
+                {"name": "as_dict", "type": "bool", "required": false, "default": "False"}
+            ],
+            "return_type": "list",
+            "description": "Fetch all rows from the last query"
+        },
+        {
+            "api_name": "Cache.set",
+            "library": "benchmark_cache",
+            "version": "2.0",
+            "parameters": [
+                {"name": "key", "type": "str", "required": true, "default": null},
+                {"name": "value", "type": "str", "required": true, "default": null},
+                {"name": "ttl", "type": "int", "required": false, "default": "None"}
+            ],
+            "return_type": "None",
+            "description": "Store a value in the cache"
+        },
+        {
+            "api_name": "Cache.get",
+            "library": "benchmark_cache",
+            "version": "2.0",
+            "parameters": [
+                {"name": "key", "type": "str", "required": true, "default": null},
+                {"name": "default", "type": "str", "required": false, "default": "None"}
+            ],
+            "return_type": "str",
+            "description": "Retrieve a value from the cache"
+        },
+        {
+            "api_name": "Auth.authenticate",
+            "library": "benchmark_auth",
+            "version": "2.0",
+            "parameters": [
+                {"name": "credentials", "type": "dict", "required": true, "default": null}
+            ],
+            "return_type": "bool",
+            "description": "Authenticate with a credentials dictionary"
+        },
+        {
+            "api_name": "Auth.token",
+            "library": "benchmark_auth",
+            "version": "2.0",
+            "parameters": [],
+            "return_type": "str",
+            "access_type": "property",
+            "description": "Read-only property returning the current auth token"
+        }
+    ]
+}

@@ -1,0 +1,298 @@
+{
+    "_comment": "Controlled Benchmark API Mappings — synthetic APIs for reproducible testing",
+    "_label": "CONTROLLED BENCHMARK — not real library versions",
+    "version": "1.0",
+    "mappings": [
+        {
+            "migration_id": "BM-HTTP-001",
+            "library": "benchmark_http",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "HTTPClient.old_connect",
+            "new_api": "HTTPClient.connect",
+            "old_signature": ["host: str", "port: str"],
+            "new_signature": ["host: str", "port: int"],
+            "argument_transformations": [
+                {
+                    "old_name": "host",
+                    "new_name": "host",
+                    "old_position": 0,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": "port",
+                    "new_name": "port",
+                    "old_position": 1,
+                    "new_position": 1,
+                    "type_conversion": "str_to_int",
+                    "default_value": null
+                }
+            ],
+            "transformation_type": "rename_with_arg_modify",
+            "description": "Rename old_connect to connect; port parameter changes from str to int"
+        },
+        {
+            "migration_id": "BM-HTTP-002",
+            "library": "benchmark_http",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "HTTPClient.send_request",
+            "new_api": "HTTPClient.request",
+            "old_signature": ["url: str", "method: str", "data: str"],
+            "new_signature": ["method: str", "url: str", "body: str = None"],
+            "argument_transformations": [
+                {
+                    "old_name": "url",
+                    "new_name": "url",
+                    "old_position": 0,
+                    "new_position": 1,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": "method",
+                    "new_name": "method",
+                    "old_position": 1,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": "data",
+                    "new_name": "body",
+                    "old_position": 2,
+                    "new_position": 2,
+                    "type_conversion": null,
+                    "default_value": "None"
+                }
+            ],
+            "transformation_type": "arg_reorder_and_rename",
+            "description": "Rename send_request to request; reorder args (method before url); rename data->body with default None"
+        },
+        {
+            "migration_id": "BM-HTTP-003",
+            "library": "benchmark_http",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "HTTPClient.close_connection",
+            "new_api": "HTTPClient.close",
+            "old_signature": [],
+            "new_signature": [],
+            "argument_transformations": [],
+            "transformation_type": "rename",
+            "description": "Simple rename: close_connection to close; no argument changes"
+        },
+        {
+            "migration_id": "BM-DB-001",
+            "library": "benchmark_db",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Database.open_connection",
+            "new_api": "Database.connect",
+            "old_signature": ["host: str", "port: int", "db: str"],
+            "new_signature": ["host: str = None", "port: int = None", "database: str = None"],
+            "argument_transformations": [
+                {
+                    "old_name": "host",
+                    "new_name": "host",
+                    "old_position": 0,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": "None"
+                },
+                {
+                    "old_name": "port",
+                    "new_name": "port",
+                    "old_position": 1,
+                    "new_position": 1,
+                    "type_conversion": null,
+                    "default_value": "None"
+                },
+                {
+                    "old_name": "db",
+                    "new_name": "database",
+                    "old_position": 2,
+                    "new_position": 2,
+                    "type_conversion": null,
+                    "default_value": "None"
+                }
+            ],
+            "transformation_type": "rename_with_arg_modify",
+            "description": "Rename open_connection to connect; rename db->database; all params become optional with defaults"
+        },
+        {
+            "migration_id": "BM-DB-002",
+            "library": "benchmark_db",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Database.execute_query",
+            "new_api": "Database.execute",
+            "old_signature": ["sql: str"],
+            "new_signature": ["sql: str", "params: tuple = None"],
+            "argument_transformations": [
+                {
+                    "old_name": "sql",
+                    "new_name": "sql",
+                    "old_position": 0,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": null,
+                    "new_name": "params",
+                    "old_position": null,
+                    "new_position": 1,
+                    "type_conversion": null,
+                    "default_value": "None"
+                }
+            ],
+            "transformation_type": "rename_with_new_param",
+            "description": "Rename execute_query to execute; new optional params parameter added"
+        },
+        {
+            "migration_id": "BM-DB-003",
+            "library": "benchmark_db",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Database.fetchall",
+            "new_api": "Database.fetch_all",
+            "old_signature": [],
+            "new_signature": ["as_dict: bool = False"],
+            "argument_transformations": [
+                {
+                    "old_name": null,
+                    "new_name": "as_dict",
+                    "old_position": null,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": "False"
+                }
+            ],
+            "transformation_type": "rename_with_new_param",
+            "description": "Rename fetchall to fetch_all; new optional as_dict parameter added"
+        },
+        {
+            "migration_id": "BM-CACHE-001",
+            "library": "benchmark_cache",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Cache.set_value",
+            "new_api": "Cache.set",
+            "old_signature": ["key: str", "value: str", "timeout: int"],
+            "new_signature": ["key: str", "value: str", "ttl: int = None"],
+            "argument_transformations": [
+                {
+                    "old_name": "key",
+                    "new_name": "key",
+                    "old_position": 0,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": "value",
+                    "new_name": "value",
+                    "old_position": 1,
+                    "new_position": 1,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": "timeout",
+                    "new_name": "ttl",
+                    "old_position": 2,
+                    "new_position": 2,
+                    "type_conversion": null,
+                    "default_value": "None"
+                }
+            ],
+            "transformation_type": "rename_with_arg_modify",
+            "description": "Rename set_value to set; rename timeout->ttl; ttl becomes optional with default None"
+        },
+        {
+            "migration_id": "BM-CACHE-002",
+            "library": "benchmark_cache",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Cache.get_value",
+            "new_api": "Cache.get",
+            "old_signature": ["key: str"],
+            "new_signature": ["key: str", "default: str = None"],
+            "argument_transformations": [
+                {
+                    "old_name": "key",
+                    "new_name": "key",
+                    "old_position": 0,
+                    "new_position": 0,
+                    "type_conversion": null,
+                    "default_value": null
+                },
+                {
+                    "old_name": null,
+                    "new_name": "default",
+                    "old_position": null,
+                    "new_position": 1,
+                    "type_conversion": null,
+                    "default_value": "None"
+                }
+            ],
+            "transformation_type": "rename_with_new_param",
+            "description": "Rename get_value to get; new optional default parameter added"
+        },
+        {
+            "migration_id": "BM-AUTH-001",
+            "library": "benchmark_auth",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Auth.login",
+            "new_api": "Auth.authenticate",
+            "old_signature": ["username: str", "password: str"],
+            "new_signature": ["credentials: dict"],
+            "argument_transformations": [
+                {
+                    "old_name": "username",
+                    "new_name": null,
+                    "old_position": 0,
+                    "new_position": null,
+                    "type_conversion": "merge_to_dict",
+                    "default_value": null
+                },
+                {
+                    "old_name": "password",
+                    "new_name": null,
+                    "old_position": 1,
+                    "new_position": null,
+                    "type_conversion": "merge_to_dict",
+                    "default_value": null
+                },
+                {
+                    "old_name": null,
+                    "new_name": "credentials",
+                    "old_position": null,
+                    "new_position": 0,
+                    "type_conversion": "dict_from_args",
+                    "merge_keys": ["username", "password"],
+                    "default_value": null
+                }
+            ],
+            "transformation_type": "arg_merge",
+            "description": "Rename login to authenticate; merge username+password into a single credentials dict"
+        },
+        {
+            "migration_id": "BM-AUTH-002",
+            "library": "benchmark_auth",
+            "old_version": "1.x",
+            "new_version": "2.0",
+            "old_api": "Auth.get_token",
+            "new_api": "Auth.token",
+            "old_signature": [],
+            "new_signature": [],
+            "argument_transformations": [],
+            "transformation_type": "method_to_property",
+            "description": "Convert get_token() method call to token property access"
+        }
+    ]
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Project Report — AI-Assisted Compiler-Guided API Migration</title>
+<style>
+  @page { margin: 2cm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #222; line-height: 1.7; }
+  h1 { text-align: center; color: #1a237e; font-size: 26px; border-bottom: 3px solid #1a237e; padding-bottom: 10px; }
+  h2 { color: #1a237e; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 35px; }
+  h3 { color: #333; }
+  .subtitle { text-align: center; color: #555; font-size: 16px; margin-bottom: 30px; }
+  .info-box { background: #e8eaf6; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #1a237e; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+  th, td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; font-size: 14px; }
+  th { background: #1a237e; color: white; }
+  tr:nth-child(even) { background: #f5f5f5; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+  .pass { color: #2e7d32; font-weight: bold; }
+  .fail { color: #c62828; font-weight: bold; }
+  .arch-box { background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 13px; white-space: pre; line-height: 1.5; }
+  .page-break { page-break-before: always; }
+  .highlight { background: #fff9c4; padding: 10px; border-radius: 5px; border-left: 4px solid #f9a825; }
+</style>
+</head>
+<body>
+
+<h1>🔄 AI-Assisted Compiler-Guided API Migration<br>with Explainable Validation</h1>
+<p class="subtitle"><strong>Compiler Design Course Project — Semester 5</strong><br>Student: Tejaswini Patil</p>
+
+<h2>1. Abstract</h2>
+<p>This project presents a Python-based prototype that automatically migrates source code from deprecated APIs to their newer equivalents using compiler techniques. Unlike simple find-and-replace tools, the system uses <strong>Abstract Syntax Tree (AST) parsing</strong>, <strong>symbol table construction</strong>, <strong>semantic analysis</strong>, and <strong>AST-based code transformation</strong> — core compiler design concepts — to perform reliable, explainable migrations.</p>
+<p>An optional AI layer (LLM integration) provides advisory explanations, while a <strong>5-stage validation pipeline</strong> ensures correctness.</p>
+<div class="info-box">
+<strong>Research Question:</strong> "Can a compiler-aware validation and feedback layer improve the reliability and explainability of AI-assisted API migration?"<br><br>
+<strong>Key Result:</strong> The system successfully migrates 10 distinct API patterns across 6 transformation types with <strong>159 automated tests passing</strong> and a 5-validator post-migration correctness pipeline.
+</div>
+
+<h2>2. Introduction</h2>
+<h3>2.1 Problem Statement</h3>
+<p>Software APIs evolve — methods get renamed, arguments change types, parameters get reordered, and some methods become properties. Developers must manually update their code, which is tedious and error-prone.</p>
+
+<h3>2.2 Why Not Just Find-and-Replace?</h3>
+<ul>
+  <li>Cannot handle argument reordering (positions change)</li>
+  <li>Cannot perform type conversions (string → integer)</li>
+  <li>Cannot merge multiple arguments into a dictionary</li>
+  <li>Cannot convert method calls to property accesses</li>
+  <li>No validation that the result is correct</li>
+</ul>
+
+<h3>2.3 Our Solution</h3>
+<p>We combine <strong>deterministic compiler techniques</strong> with <strong>optional AI assistance</strong> and a <strong>compiler-guided validation layer</strong>. The deterministic pipeline handles all transformations reliably. AI provides explanations. Validation ensures correctness.</p>
+
+<h2 class="page-break">3. System Architecture</h2>
+<div class="arch-box">
+SOURCE CODE
+    ↓
+AST PARSER (Phase 3)          → Parses code into Abstract Syntax Tree
+    ↓
+API DETECTOR (Phase 4)         → Finds deprecated API calls
+    ↓
+SYMBOL ANALYZER (Phase 5)      → Builds symbol table (variable → class)
+    ↓
+SEMANTIC ANALYZER (Phase 5)    → Checks types, argument counts
+    ↓
+MIGRATION PLANNER (Phase 6)    → Creates transformation plans (IR)
+    ↓
+AST TRANSFORMER (Phase 7)      → Rewrites AST nodes
+    ↓
+CODE GENERATOR (Phase 7)       → Generates new source code + diff
+    ↓
+AI INSIGHT (Phase 8)           → Optional advisory explanations
+    ↓
+VALIDATION PIPELINE (Phase 9)  → 5 validators → PASS / FAIL
+    ↓
+STREAMLIT UI (Phase 10)        → Interactive web demo
+</div>
+
+<h2>4. Compiler Design Concepts Applied</h2>
+<table>
+  <tr><th>Compiler Concept</th><th>Where Applied</th></tr>
+  <tr><td>Lexical &amp; Syntax Analysis</td><td><code>ast.parse()</code> tokenizes and parses Python source</td></tr>
+  <tr><td>Abstract Syntax Tree</td><td>All phases operate on the AST, not raw strings</td></tr>
+  <tr><td>Tree Traversal (Visitor Pattern)</td><td><code>ast.NodeVisitor</code> for extraction, <code>ast.NodeTransformer</code> for rewriting</td></tr>
+  <tr><td>Symbol Table</td><td><code>symbol_analyzer.py</code> — variable→class, imports, scopes</td></tr>
+  <tr><td>Semantic Analysis</td><td><code>semantic_analyzer.py</code> — type checking, argument validation</td></tr>
+  <tr><td>Intermediate Representation</td><td><code>MigrationPlan</code> — IR between analysis and code generation</td></tr>
+  <tr><td>Code Generation</td><td><code>ast.unparse()</code> — AST back to source code</td></tr>
+  <tr><td>Error Reporting</td><td>Line/column info, severity levels, structured diagnostics</td></tr>
+  <tr><td>Multi-pass Compilation</td><td>Parse → Detect → Symbol → Semantic → Plan → Transform → Validate</td></tr>
+</table>
+
+<h2 class="page-break">5. Migration Knowledge Base</h2>
+<p>10 migration patterns across 4 benchmark libraries:</p>
+<table>
+  <tr><th>ID</th><th>Old API</th><th>New API</th><th>Transformation</th></tr>
+  <tr><td>BM-HTTP-001</td><td><code>old_connect(host, port)</code></td><td><code>connect(host, port)</code></td><td>rename + type conversion (str→int)</td></tr>
+  <tr><td>BM-HTTP-002</td><td><code>send_request(url, method, data)</code></td><td><code>request(method, url, body)</code></td><td>argument reorder + rename</td></tr>
+  <tr><td>BM-HTTP-003</td><td><code>close_connection()</code></td><td><code>close()</code></td><td>simple rename</td></tr>
+  <tr><td>BM-DB-001</td><td><code>open_connection(host,port,db)</code></td><td><code>connect(host,port,database)</code></td><td>rename + arg rename</td></tr>
+  <tr><td>BM-DB-002</td><td><code>execute_query(sql)</code></td><td><code>execute(query, params)</code></td><td>rename + new param</td></tr>
+  <tr><td>BM-DB-003</td><td><code>fetchall()</code></td><td><code>fetch_all()</code></td><td>simple rename</td></tr>
+  <tr><td>BM-CACHE-001</td><td><code>set_value(key, val, ttl)</code></td><td><code>set(key, value, expire)</code></td><td>rename + arg rename</td></tr>
+  <tr><td>BM-CACHE-002</td><td><code>get_value(key)</code></td><td><code>get(key)</code></td><td>simple rename</td></tr>
+  <tr><td>BM-AUTH-001</td><td><code>login(user, pass)</code></td><td><code>authenticate(credentials)</code></td><td>argument merge to dict</td></tr>
+  <tr><td>BM-AUTH-002</td><td><code>get_token()</code></td><td><code>token</code></td><td>method → property</td></tr>
+</table>
+
+<h2>6. Demonstration</h2>
+<h3>6.1 Successful Migration — Auth Library</h3>
+<p><strong>Before (deprecated):</strong></p>
+<pre>from benchmark_auth import Auth
+
+auth = Auth()
+auth.login('admin', 'secret')
+token = auth.get_token()</pre>
+
+<p><strong>After (migrated):</strong></p>
+<pre>from benchmark_auth import Auth
+
+auth = Auth()
+auth.authenticate({'username': 'admin', 'password': 'secret'})
+token = auth.token</pre>
+
+<div class="info-box">
+<strong>What happened:</strong><br>
+• <code>login('admin','secret')</code> → <code>authenticate({'username':'admin','password':'secret'})</code> — two args merged into dict<br>
+• <code>get_token()</code> → <code>token</code> — method call converted to property access (parentheses removed)<br>
+• <span class="pass">Validation: ✅ PASS</span> — all 5 validators passed
+</div>
+
+<h3>6.2 Failed Migration (caught by validation)</h3>
+<pre>client.old_connect('host', 'port', 'extra_arg')  # 3 args instead of 2</pre>
+<p><span class="fail">Semantic analysis catches:</span> argument count mismatch — expected 2, got 3.</p>
+
+<h3>6.3 Repair Required</h3>
+<pre>auth.get_token('unexpected_arg')  # property shouldn't have args</pre>
+<p><span class="fail">Semantic analysis catches:</span> method_to_property migration but call has arguments.</p>
+
+<h2 class="page-break">7. Validation Pipeline</h2>
+<table>
+  <tr><th>Validator</th><th>What It Checks</th><th>Method</th></tr>
+  <tr><td>Syntax</td><td>Is the migrated code valid Python?</td><td><code>compile()</code></td></tr>
+  <tr><td>Compiler</td><td>Isolated compilation check</td><td><code>compile()</code> in isolation</td></tr>
+  <tr><td>AST</td><td>Can it be re-parsed? New APIs present? Old APIs gone?</td><td><code>ast.parse()</code> + walk</td></tr>
+  <tr><td>Type</td><td>Do argument types match target spec?</td><td>Type inference + spec comparison</td></tr>
+  <tr><td>API</td><td>Correct arg count? Property vs method?</td><td>Target API spec compliance</td></tr>
+</table>
+
+<h2>8. Testing</h2>
+<table>
+  <tr><th>Test File</th><th>Tests</th><th>Coverage</th></tr>
+  <tr><td>test_parser.py</td><td>33</td><td>Parsing, imports, calls, arguments, errors</td></tr>
+  <tr><td>test_api_detector.py</td><td>27</td><td>Detection, false positives, symbol table</td></tr>
+  <tr><td>test_symbol_semantic.py</td><td>36</td><td>Symbol table, type inference, semantic checks</td></tr>
+  <tr><td>test_planner.py</td><td>16</td><td>Plan generation, confidence, ordering</td></tr>
+  <tr><td>test_transformer.py</td><td>17</td><td>All 6 transformation types, re-parsability</td></tr>
+  <tr><td>test_ai.py</td><td>18</td><td>Mock provider, factory, prompts, agent</td></tr>
+  <tr><td>test_validation.py</td><td>12</td><td>All 5 validators, pipeline</td></tr>
+  <tr><th>Total</th><th class="pass">159</th><th class="pass">All Passing ✅</th></tr>
+</table>
+
+<h2>9. Technologies Used</h2>
+<table>
+  <tr><th>Technology</th><th>Purpose</th></tr>
+  <tr><td>Python 3.11</td><td>Core language</td></tr>
+  <tr><td><code>ast</code> module</td><td>Parsing, traversal, transformation, code generation</td></tr>
+  <tr><td><code>ast.NodeVisitor</code></td><td>Read-only tree traversal</td></tr>
+  <tr><td><code>ast.NodeTransformer</code></td><td>Tree rewriting</td></tr>
+  <tr><td><code>difflib</code></td><td>Unified diff generation</td></tr>
+  <tr><td><code>pytest</code></td><td>159 automated tests</td></tr>
+  <tr><td><code>Streamlit</code></td><td>Interactive web UI</td></tr>
+</table>
+
+<h2>10. Conclusion</h2>
+<p>This project demonstrates that <strong>compiler-aware techniques significantly improve the reliability of API migration</strong>. By using AST parsing, symbol tables, semantic analysis, and structured validation:</p>
+<ol>
+  <li><strong>Correctness is guaranteed</strong> through a 5-stage validation pipeline</li>
+  <li><strong>Explainability is built-in</strong> — every decision is traceable</li>
+  <li><strong>Complex transformations are handled</strong> — reordering, type conversions, merging, method→property</li>
+  <li><strong>AI augments but does not replace</strong> the deterministic pipeline</li>
+  <li><strong>No regex/string replacement</strong> — all operations are AST-based</li>
+</ol>
+
+<div class="highlight">
+<strong>Answer to research question:</strong> Yes — a compiler-guided validation layer demonstrably improves migration reliability and provides clear explanations for every transformation applied.
+</div>
+
+<h2>11. How to Run</h2>
+<pre>cd api-migrate
+venv\Scripts\activate
+pip install -r requirements.txt
+python -m streamlit run app/ui/streamlit_app.py    # Web UI
+python -m pytest -q                                 # Run 159 tests</pre>
+
+</body>
+</html>

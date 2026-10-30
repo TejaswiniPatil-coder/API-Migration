@@ -1,0 +1,192 @@
+{
+    "_comment": "Benchmark test cases for the migration pipeline — controlled, synthetic",
+    "_label": "CONTROLLED BENCHMARK — not real library code",
+    "version": "1.0",
+    "cases": [
+        {
+            "case_id": "TC-001",
+            "title": "Simple method rename — close_connection to close",
+            "category": "successful",
+            "migration_ids": ["BM-HTTP-003"],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.close_connection()\n",
+            "expected_detections": [
+                {
+                    "api_name": "HTTPClient.close_connection",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.close()\n",
+            "expected_validation": "pass",
+            "notes": "Simplest possible migration — no argument changes"
+        },
+        {
+            "case_id": "TC-002",
+            "title": "Rename with type conversion — port str to int",
+            "category": "successful",
+            "migration_ids": ["BM-HTTP-001"],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.old_connect(\"localhost\", \"8080\")\n",
+            "expected_detections": [
+                {
+                    "api_name": "HTTPClient.old_connect",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.connect(\"localhost\", int(\"8080\"))\n",
+            "expected_validation": "pass",
+            "notes": "Port argument must be wrapped in int() conversion"
+        },
+        {
+            "case_id": "TC-003",
+            "title": "Argument reorder and rename — send_request to request",
+            "category": "successful",
+            "migration_ids": ["BM-HTTP-002"],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nresponse = client.send_request(\"https://api.example.com\", \"GET\", \"payload\")\n",
+            "expected_detections": [
+                {
+                    "api_name": "HTTPClient.send_request",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nresponse = client.request(\"GET\", \"https://api.example.com\", body=\"payload\")\n",
+            "expected_validation": "pass",
+            "notes": "method moves to pos 0, url to pos 1, data renamed to body as keyword arg"
+        },
+        {
+            "case_id": "TC-004",
+            "title": "Rename with new optional parameter — execute_query to execute",
+            "category": "successful",
+            "migration_ids": ["BM-DB-002"],
+            "source_code": "from benchmark_db import Database\n\ndb = Database()\ndb.execute_query(\"SELECT * FROM users\")\n",
+            "expected_detections": [
+                {
+                    "api_name": "Database.execute_query",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_db import Database\n\ndb = Database()\ndb.execute(\"SELECT * FROM users\")\n",
+            "expected_validation": "pass",
+            "notes": "New params parameter has a default so it is not emitted"
+        },
+        {
+            "case_id": "TC-005",
+            "title": "Argument rename — set_value timeout to set ttl",
+            "category": "successful",
+            "migration_ids": ["BM-CACHE-001"],
+            "source_code": "from benchmark_cache import Cache\n\ncache = Cache()\ncache.set_value(\"session\", \"abc123\", 3600)\n",
+            "expected_detections": [
+                {
+                    "api_name": "Cache.set_value",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_cache import Cache\n\ncache = Cache()\ncache.set(\"session\", \"abc123\", ttl=3600)\n",
+            "expected_validation": "pass",
+            "notes": "timeout renamed to ttl; emitted as keyword arg since it is now optional"
+        },
+        {
+            "case_id": "TC-006",
+            "title": "Argument merge — login to authenticate",
+            "category": "repair_required",
+            "migration_ids": ["BM-AUTH-001"],
+            "source_code": "from benchmark_auth import Auth\n\nauth = Auth()\nauth.login(\"admin\", \"secret\")\n",
+            "expected_detections": [
+                {
+                    "api_name": "Auth.login",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_auth import Auth\n\nauth = Auth()\nauth.authenticate({\"username\": \"admin\", \"password\": \"secret\"})\n",
+            "expected_validation": "pass",
+            "notes": "Two positional args merged into one dict; complex transform may need AI assist"
+        },
+        {
+            "case_id": "TC-007",
+            "title": "Method to property — get_token to token",
+            "category": "successful",
+            "migration_ids": ["BM-AUTH-002"],
+            "source_code": "from benchmark_auth import Auth\n\nauth = Auth()\ntoken = auth.get_token()\n",
+            "expected_detections": [
+                {
+                    "api_name": "Auth.get_token",
+                    "line": 4
+                }
+            ],
+            "expected_migrated_code": "from benchmark_auth import Auth\n\nauth = Auth()\ntoken = auth.token\n",
+            "expected_validation": "pass",
+            "notes": "Call node removed; replaced with attribute access"
+        },
+        {
+            "case_id": "TC-008",
+            "title": "Type mismatch detection — port left as string",
+            "category": "failed",
+            "migration_ids": ["BM-HTTP-001"],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.connect(\"localhost\", \"8080\")\n",
+            "expected_detections": [],
+            "expected_migrated_code": null,
+            "expected_validation": "fail",
+            "expected_validation_errors": [
+                {
+                    "validator": "type",
+                    "message": "Type mismatch: parameter 'port' expects int, got str"
+                }
+            ],
+            "notes": "Code already uses new API name but port is still a string — type validator should catch this"
+        },
+        {
+            "case_id": "TC-009",
+            "title": "Multiple migrations in one file",
+            "category": "successful",
+            "migration_ids": ["BM-DB-001", "BM-DB-002", "BM-DB-003"],
+            "source_code": "from benchmark_db import Database\n\ndb = Database()\ndb.open_connection(\"localhost\", 5432, \"mydb\")\ndb.execute_query(\"SELECT * FROM users\")\nresults = db.fetchall()\n",
+            "expected_detections": [
+                {"api_name": "Database.open_connection", "line": 4},
+                {"api_name": "Database.execute_query", "line": 5},
+                {"api_name": "Database.fetchall", "line": 6}
+            ],
+            "expected_migrated_code": "from benchmark_db import Database\n\ndb = Database()\ndb.connect(host=\"localhost\", port=5432, database=\"mydb\")\ndb.execute(\"SELECT * FROM users\")\nresults = db.fetch_all()\n",
+            "expected_validation": "pass",
+            "notes": "Tests that multiple migrations in a single file are handled correctly"
+        },
+        {
+            "case_id": "TC-010",
+            "title": "No deprecated API — no migration needed",
+            "category": "successful",
+            "migration_ids": [],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient()\nclient.connect(\"localhost\", 8080)\nclient.close()\n",
+            "expected_detections": [],
+            "expected_migrated_code": null,
+            "expected_validation": "pass",
+            "notes": "Code already uses the new API — nothing should be detected or migrated"
+        },
+        {
+            "case_id": "TC-011",
+            "title": "Syntax error in input",
+            "category": "failed",
+            "migration_ids": [],
+            "source_code": "from benchmark_http import HTTPClient\n\nclient = HTTPClient(\nclient.old_connect(\"localhost\", \"8080\")\n",
+            "expected_detections": [],
+            "expected_migrated_code": null,
+            "expected_validation": "fail",
+            "expected_validation_errors": [
+                {
+                    "validator": "syntax",
+                    "message": "SyntaxError in source code"
+                }
+            ],
+            "notes": "Parser should reject this and report the syntax error before any migration"
+        },
+        {
+            "case_id": "TC-012",
+            "title": "Mixed — some APIs deprecated, some already migrated",
+            "category": "successful",
+            "migration_ids": ["BM-CACHE-001"],
+            "source_code": "from benchmark_cache import Cache\n\ncache = Cache()\ncache.set_value(\"key1\", \"val1\", 300)\nresult = cache.get(\"key1\")\n",
+            "expected_detections": [
+                {"api_name": "Cache.set_value", "line": 4}
+            ],
+            "expected_migrated_code": "from benchmark_cache import Cache\n\ncache = Cache()\ncache.set(\"key1\", \"val1\", ttl=300)\nresult = cache.get(\"key1\")\n",
+            "expected_validation": "pass",
+            "notes": "cache.get is already the new API — only set_value should be detected and migrated"
+        }
+    ]
+}
